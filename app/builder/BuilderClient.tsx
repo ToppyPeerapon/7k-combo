@@ -330,7 +330,7 @@ export default function BuilderClient() {
                           <span className="pointer-events-none w-4 h-4 rounded-full bg-gray-200 text-gray-600 text-[9px] font-bold flex items-center justify-center">
                             {idx + 1}
                           </span>
-                          <div className="pointer-events-none w-10 h-10 rounded-lg overflow-hidden border border-gray-200 bg-gray-100 shrink-0">
+                          <div id={`seq-skill-${idx + 1}`} className="pointer-events-none w-10 h-10 rounded-lg overflow-hidden border border-gray-200 bg-gray-100 shrink-0">
                             {heroSlot.hero && (
                               <img src={skillImg(heroSlot.hero, step.skillNum)} alt=""
                                 className="object-cover w-full h-full"
