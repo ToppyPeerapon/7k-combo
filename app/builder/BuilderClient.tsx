@@ -156,8 +156,11 @@ export default function BuilderClient() {
     <div className="h-screen flex flex-col bg-gray-50 overflow-hidden">
       <div className="flex-1 flex gap-3 p-3 min-h-0">
 
-        {/* ── COL 1: Formation ── */}
-        <section className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2 w-[280px] shrink-0">
+        {/* ── LEFT STACK: Formation + Hero Detail ── */}
+        <div className="flex flex-col gap-3 w-[280px] shrink-0">
+
+        {/* ── Formation ── */}
+        <section className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2">
           <div className="flex items-center justify-between">
             <h2 className="font-semibold text-gray-800 text-xs uppercase tracking-wide">Formation</h2>
             <div className="flex gap-1 bg-gray-100 rounded-xl p-0.5">
@@ -188,8 +191,8 @@ export default function BuilderClient() {
           </div>
         </section>
 
-        {/* ── COL 2: Hero Detail ── */}
-        <section className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2 w-[240px] shrink-0">
+        {/* ── Hero Detail ── */}
+        <section className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2">
           <div className="flex items-center gap-2">
             {slot.hero ? (
               <div className="w-9 h-12 rounded-lg overflow-hidden border border-gray-200 shrink-0">
@@ -244,7 +247,9 @@ export default function BuilderClient() {
           </div>
         </section>
 
-        {/* ── COL 3: Skill Sequence ── */}
+        </div>{/* end left stack */}
+
+        {/* ── COL 2: Skill Sequence ── */}
         <section className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2 flex-1 min-w-0">
           <div className="flex gap-4 flex-1 min-h-0">
 
