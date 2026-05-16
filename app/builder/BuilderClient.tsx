@@ -1,6 +1,7 @@
 "use client";
 import { useState, useId, useRef } from "react";
 import { HEROES, Hero } from "@/app/data/heroes";
+import html2canvas from "html2canvas";
 
 type TeamSlot = {
   hero: Hero | null;
@@ -159,6 +160,32 @@ export default function BuilderClient() {
 
   const slot = team[activeSlot];
   const heroRow = activeSlot < frontCount ? "Front" : "Back";
+  const [shareImages, setShareImages] = useState<{ detail: string; sequence: string } | null>(null);
+  const [capturing, setCapturing] = useState(false);
+
+  async function captureImages() {
+    setCapturing(true);
+    try {
+      const opts = { backgroundColor: "#f9fafb", scale: 2, useCORS: true, logging: false };
+      const detailEl = document.getElementById("share-detail-capture");
+      const seqEl = document.getElementById("skill-sequence");
+      if (!detailEl || !seqEl) return;
+      const [detailCanvas, seqCanvas] = await Promise.all([
+        html2canvas(detailEl, opts),
+        html2canvas(seqEl, opts),
+      ]);
+      setShareImages({ detail: detailCanvas.toDataURL("image/png"), sequence: seqCanvas.toDataURL("image/png") });
+    } finally {
+      setCapturing(false);
+    }
+  }
+
+  function downloadImage(dataUrl: string, name: string) {
+    const a = document.createElement("a");
+    a.href = dataUrl;
+    a.download = name;
+    a.click();
+  }
 
   return (
     <div id="builder-root" className="h-screen flex flex-col bg-gray-50 overflow-hidden">
@@ -166,6 +193,9 @@ export default function BuilderClient() {
 
         {/* ── LEFT STACK: Formation + Hero Detail ── */}
         <div id="left-panel" className="flex flex-col gap-3 w-[400px] shrink-0 overflow-y-auto min-h-0">
+
+        {/* capture wrapper for share image 1 */}
+        <div id="share-detail-capture" className="flex flex-col gap-3">
 
         {/* ── Formation ── */}
         <section id="formation" className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2">
@@ -257,6 +287,8 @@ export default function BuilderClient() {
             );
           })}
         </section>
+
+        </div>{/* end share-detail-capture */}
 
         {/* ── Skill Pool ── */}
         <section id="skill-pool" className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2">
@@ -360,6 +392,55 @@ export default function BuilderClient() {
         </section>
 
       </div>
+
+      {/* ── FLOAT SHARE BUTTON ── */}
+      <button onClick={captureImages} disabled={capturing}
+        className="fixed bottom-5 right-5 z-40 w-12 h-12 rounded-full bg-blue-500 hover:bg-blue-600 active:scale-95 text-white shadow-lg flex items-center justify-center transition-all disabled:opacity-60">
+        {capturing ? (
+          <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+          </svg>
+        ) : (
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 12V4m0 0L8 8m4-4l4 4" />
+          </svg>
+        )}
+      </button>
+
+      {/* ── SHARE PREVIEW MODAL ── */}
+      {shareImages && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4"
+          onClick={() => setShareImages(null)}>
+          <div className="bg-white rounded-2xl w-full max-w-3xl flex flex-col max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-4 border-b border-gray-100 shrink-0">
+              <h2 className="font-bold text-gray-800">Share Images</h2>
+              <button onClick={() => setShareImages(null)} className="text-gray-400 hover:text-gray-700 text-xl w-7 h-7 flex items-center justify-center">×</button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-6">
+              {/* Image 1 */}
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-gray-700">Formation & Hero Detail</p>
+                  <button onClick={() => downloadImage(shareImages.detail, "formation.png")}
+                    className="text-xs text-blue-500 hover:underline">Download</button>
+                </div>
+                <img src={shareImages.detail} alt="Formation" className="w-full rounded-xl border border-gray-200" />
+              </div>
+              {/* Image 2 */}
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-gray-700">Skill Sequence</p>
+                  <button onClick={() => downloadImage(shareImages.sequence, "sequence.png")}
+                    className="text-xs text-blue-500 hover:underline">Download</button>
+                </div>
+                <img src={shareImages.sequence} alt="Sequence" className="w-full rounded-xl border border-gray-200" />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── HERO PICKER MODAL ── */}
       {pickerOpen !== null && (
