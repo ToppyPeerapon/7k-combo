@@ -295,7 +295,7 @@ export default function BuilderClient() {
           <h2 className="font-semibold text-gray-800 text-xs uppercase tracking-wide">Sequence</h2>
           <div className="flex-1 overflow-y-auto min-h-0">
             {sequence.length > 0 ? (
-              <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(52px, 1fr))" }}>
+              <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(90px, 1fr))" }}>
                 {previewSequence.map((step, idx) => {
                       const heroSlot = team[step.slotIndex];
                       const isBeingDragged = dragFrom !== null && sequence[dragFrom]?.id === step.id && isDragging;
