@@ -324,22 +324,22 @@ export default function BuilderClient() {
                             dragFromRef.current = null; setDragFrom(null); setDragInsertPos(null);
                           }}
                           onDragEnd={() => { dragFromRef.current = null; setDragFrom(null); setDragInsertPos(null); }}
-                          className={`flex flex-col items-center gap-0.5 rounded-lg p-1 cursor-grab active:cursor-grabbing select-none transition-all border-2
+                          className={`flex flex-col items-center gap-1 rounded-xl p-1.5 cursor-grab active:cursor-grabbing select-none transition-all border-2
                             ${isPreviewTarget ? "border-blue-400 bg-blue-50 scale-105 shadow-md" : "border-gray-100 bg-gray-50"}
                             ${isBeingDragged ? "opacity-30" : "opacity-100"}`}>
-                          <span className="pointer-events-none w-4 h-4 rounded-full bg-gray-200 text-gray-600 text-[9px] font-bold flex items-center justify-center">
+                          <span className="pointer-events-none w-5 h-5 rounded-full bg-gray-200 text-gray-600 text-[10px] font-bold flex items-center justify-center">
                             {idx + 1}
                           </span>
-                          <div id={`seq-skill-${idx + 1}`} className="pointer-events-none w-10 h-10 rounded-lg overflow-hidden border border-gray-200 bg-gray-100 shrink-0">
+                          <div id={`seq-skill-${idx + 1}`} className="pointer-events-none w-full aspect-square rounded-lg overflow-hidden border border-gray-200 bg-gray-100">
                             {heroSlot.hero && (
                               <img src={skillImg(heroSlot.hero, step.skillNum)} alt=""
                                 className="object-cover w-full h-full"
                                 onError={(e) => { (e.target as HTMLImageElement).src = heroSlot.hero!.image; }} />
                             )}
                           </div>
-                          <span className="pointer-events-none text-[7px] text-gray-500 font-semibold">S{step.skillNum}</span>
+                          <span className="pointer-events-none text-[9px] text-gray-500 font-semibold">S{step.skillNum}</span>
                           <button onClick={(e) => { e.stopPropagation(); removeStep(step.id); }}
-                            className="w-full py-0.5 rounded text-red-400 hover:text-red-600 hover:bg-red-50 transition text-[9px] font-bold flex items-center justify-center border border-red-100 hover:border-red-200">
+                            className="w-full py-0.5 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 transition text-[10px] font-bold flex items-center justify-center border border-red-100 hover:border-red-200">
                             ×
                           </button>
                         </div>
