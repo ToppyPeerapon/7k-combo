@@ -295,7 +295,7 @@ export default function BuilderClient() {
           <h2 className="font-semibold text-gray-800 text-xs uppercase tracking-wide">Sequence</h2>
           <div className="flex-1 overflow-y-auto min-h-0">
             {sequence.length > 0 ? (
-              <div className="flex flex-wrap gap-2 content-start">
+              <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(52px, 1fr))" }}>
                 {previewSequence.map((step, idx) => {
                       const heroSlot = team[step.slotIndex];
                       const isBeingDragged = dragFrom !== null && sequence[dragFrom]?.id === step.id && isDragging;
@@ -324,7 +324,7 @@ export default function BuilderClient() {
                             dragFromRef.current = null; setDragFrom(null); setDragInsertPos(null);
                           }}
                           onDragEnd={() => { dragFromRef.current = null; setDragFrom(null); setDragInsertPos(null); }}
-                          className={`flex flex-col items-center gap-0.5 rounded-lg p-1 flex-1 min-w-[52px] max-w-[80px] cursor-grab active:cursor-grabbing select-none transition-all border-2
+                          className={`flex flex-col items-center gap-0.5 rounded-lg p-1 cursor-grab active:cursor-grabbing select-none transition-all border-2
                             ${isPreviewTarget ? "border-blue-400 bg-blue-50 scale-105 shadow-md" : "border-gray-100 bg-gray-50"}
                             ${isBeingDragged ? "opacity-30" : "opacity-100"}`}>
                           <span className="pointer-events-none w-4 h-4 rounded-full bg-gray-200 text-gray-600 text-[9px] font-bold flex items-center justify-center">
