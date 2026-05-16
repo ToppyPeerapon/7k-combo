@@ -291,9 +291,9 @@ export default function BuilderClient() {
         </div>{/* end left stack */}
 
         {/* ── COL 2: Sequence ── */}
-        <section id="skill-sequence" className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2 flex-1 min-w-0 self-start">
+        <section id="skill-sequence" className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2 flex-1 min-w-0 min-h-0">
           <h2 className="font-semibold text-gray-800 text-xs uppercase tracking-wide">Sequence</h2>
-          <div>
+          <div className="flex-1 overflow-y-auto min-h-0">
             {sequence.length > 0 ? (
               <div className="flex flex-wrap gap-2 content-start">
                 {previewSequence.map((step, idx) => {
