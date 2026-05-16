@@ -157,7 +157,7 @@ export default function BuilderClient() {
       <div className="flex-1 flex gap-3 p-3 min-h-0">
 
         {/* ── LEFT STACK: Formation + Hero Detail ── */}
-        <div className="flex flex-col gap-3 w-[280px] shrink-0">
+        <div className="flex flex-col gap-3 w-[280px] shrink-0 overflow-y-auto min-h-0">
 
         {/* ── Formation ── */}
         <section className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2">
@@ -237,70 +237,63 @@ export default function BuilderClient() {
             </div>
           </div>
 
-          <div className="space-y-1 flex-1 flex flex-col">
+          <div className="space-y-1">
             <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">Notes</p>
             <textarea value={team[activeSlot].notes}
               onChange={(e) => updateField(activeSlot, "notes", e.target.value)}
               placeholder="เช่น คริติคอล 90%, จุดอ่อน..."
               rows={2}
-              className="w-full flex-1 border border-gray-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-2 focus:ring-blue-200 transition resize-none" />
+              className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-2 focus:ring-blue-200 transition resize-none" />
           </div>
+        </section>
+
+        {/* ── Skill Pool ── */}
+        <section className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2">
+          <h2 className="font-semibold text-gray-800 text-xs uppercase tracking-wide">Skill Pool</h2>
+          {filledCount > 0 ? (() => {
+            const filledSlots = team.map((s, i) => ({ slot: s, idx: i })).filter(({ slot }) => slot.hero !== null);
+            return (
+              <div className="bg-gray-50 rounded-xl p-2 space-y-1.5">
+                <p className="text-[9px] text-gray-400 font-semibold uppercase tracking-wide">คลิกสกิลเพื่อเพิ่ม</p>
+                <div className="grid gap-x-2 gap-y-1.5" style={{ gridTemplateColumns: `repeat(${filledSlots.length}, minmax(44px, 44px))` }}>
+                  {filledSlots.map(({ slot, idx }) => (
+                    <div key={`h-${idx}`} className="flex justify-center">
+                      <div className="w-7 h-7 rounded-lg overflow-hidden border border-gray-200">
+                        <img src={slot.hero!.image} alt={slot.hero!.name} className="object-cover object-top w-full h-full" />
+                      </div>
+                    </div>
+                  ))}
+                  {filledSlots.map(({ slot, idx }) => (
+                    <button key={`s2-${idx}`} onClick={() => addStep(idx, 2)}
+                      className="w-11 h-11 rounded-xl overflow-hidden border-2 border-gray-200 hover:border-blue-400 hover:scale-110 active:scale-95 transition-all bg-gray-100">
+                      <img src={skillImg(slot.hero!, 2)} alt="skill 2" className="object-cover w-full h-full"
+                        onError={(e) => { (e.target as HTMLImageElement).src = slot.hero!.image; }} />
+                    </button>
+                  ))}
+                  {filledSlots.map(({ slot, idx }) => (
+                    <button key={`s3-${idx}`} onClick={() => addStep(idx, 3)}
+                      className="w-11 h-11 rounded-xl overflow-hidden border-2 border-gray-200 hover:border-blue-400 hover:scale-110 active:scale-95 transition-all bg-gray-100">
+                      <img src={skillImg(slot.hero!, 3)} alt="skill 3" className="object-cover w-full h-full"
+                        onError={(e) => { (e.target as HTMLImageElement).src = slot.hero!.image; }} />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          })() : (
+            <p className="text-xs text-gray-400">เพิ่มฮีโร่ในทีมก่อน</p>
+          )}
         </section>
 
         </div>{/* end left stack */}
 
-        {/* ── COL 2: Skill Sequence ── */}
+        {/* ── COL 2: Sequence ── */}
         <section className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2 flex-1 min-w-0">
-          <div className="flex gap-4 flex-1 min-h-0">
-
-            {/* Skill Pool */}
-            <div className="shrink-0 flex flex-col gap-2">
-              <h2 className="font-semibold text-gray-800 text-xs uppercase tracking-wide">Skill Pool</h2>
-              {filledCount > 0 ? (() => {
-                const filledSlots = team.map((s, i) => ({ slot: s, idx: i })).filter(({ slot }) => slot.hero !== null);
-                return (
-                  <div className="bg-gray-50 rounded-xl p-2 space-y-1.5">
-                    <p className="text-[9px] text-gray-400 font-semibold uppercase tracking-wide">คลิกสกิลเพื่อเพิ่ม</p>
-                    <div className="grid gap-x-2 gap-y-1.5" style={{ gridTemplateColumns: `repeat(${filledSlots.length}, minmax(48px, 48px))` }}>
-                      {filledSlots.map(({ slot, idx }) => (
-                        <div key={`h-${idx}`} className="flex justify-center">
-                          <div className="w-8 h-8 rounded-lg overflow-hidden border border-gray-200">
-                            <img src={slot.hero!.image} alt={slot.hero!.name} className="object-cover object-top w-full h-full" />
-                          </div>
-                        </div>
-                      ))}
-                      {filledSlots.map(({ slot, idx }) => (
-                        <button key={`s2-${idx}`} onClick={() => addStep(idx, 2)}
-                          className="w-12 h-12 rounded-xl overflow-hidden border-2 border-gray-200 hover:border-blue-400 hover:scale-110 active:scale-95 transition-all bg-gray-100">
-                          <img src={skillImg(slot.hero!, 2)} alt="skill 2" className="object-cover w-full h-full"
-                            onError={(e) => { (e.target as HTMLImageElement).src = slot.hero!.image; }} />
-                        </button>
-                      ))}
-                      {filledSlots.map(({ slot, idx }) => (
-                        <button key={`s3-${idx}`} onClick={() => addStep(idx, 3)}
-                          className="w-12 h-12 rounded-xl overflow-hidden border-2 border-gray-200 hover:border-blue-400 hover:scale-110 active:scale-95 transition-all bg-gray-100">
-                          <img src={skillImg(slot.hero!, 3)} alt="skill 3" className="object-cover w-full h-full"
-                            onError={(e) => { (e.target as HTMLImageElement).src = slot.hero!.image; }} />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })() : (
-                <p className="text-xs text-gray-400">เพิ่มฮีโร่ในทีมก่อน</p>
-              )}
-            </div>
-
-            {/* Divider */}
-            <div className="w-px bg-gray-100 self-stretch shrink-0" />
-
-            {/* Sequence */}
-            <div className="flex-1 flex flex-col gap-2 min-w-0">
-              <h2 className="font-semibold text-gray-800 text-xs uppercase tracking-wide">Sequence</h2>
-              <div className="flex-1 overflow-x-auto overflow-y-hidden">
-                {sequence.length > 0 ? (
-                  <div className="flex gap-2 items-start h-full">
-                    {previewSequence.map((step, idx) => {
+          <h2 className="font-semibold text-gray-800 text-xs uppercase tracking-wide">Sequence</h2>
+          <div className="flex-1 overflow-y-auto">
+            {sequence.length > 0 ? (
+              <div className="flex flex-wrap gap-2 content-start">
+                {previewSequence.map((step, idx) => {
                       const heroSlot = team[step.slotIndex];
                       const isBeingDragged = dragFrom !== null && sequence[dragFrom]?.id === step.id && isDragging;
                       const isPreviewTarget = idx === movedToIdx;
@@ -352,9 +345,6 @@ export default function BuilderClient() {
                 ) : (
                   <p className="text-xs text-gray-400">คลิกสกิลในช่อง Pool เพื่อเพิ่ม</p>
                 )}
-              </div>
-            </div>
-
           </div>
         </section>
 
