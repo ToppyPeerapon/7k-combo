@@ -153,14 +153,14 @@ export default function BuilderClient() {
   const heroRow = activeSlot < frontCount ? "Front" : "Back";
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50 overflow-hidden">
-      <div className="flex-1 flex gap-3 p-3 min-h-0">
+    <div id="builder-root" className="h-screen flex flex-col bg-gray-50 overflow-hidden">
+      <div id="builder-main" className="flex-1 flex gap-3 p-3 min-h-0">
 
         {/* ── LEFT STACK: Formation + Hero Detail ── */}
-        <div className="flex flex-col gap-3 w-[280px] shrink-0 overflow-y-auto min-h-0">
+        <div id="left-panel" className="flex flex-col gap-3 w-[280px] shrink-0 overflow-y-auto min-h-0">
 
         {/* ── Formation ── */}
-        <section className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2">
+        <section id="formation" className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2">
           <div className="flex items-center justify-between">
             <h2 className="font-semibold text-gray-800 text-xs uppercase tracking-wide">Formation</h2>
             <div className="flex gap-1 bg-gray-100 rounded-xl p-0.5">
@@ -192,7 +192,7 @@ export default function BuilderClient() {
         </section>
 
         {/* ── Hero Detail ── */}
-        <section className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2">
+        <section id="hero-detail" className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2">
           <div className="flex items-center gap-2">
             {slot.hero ? (
               <div className="w-9 h-12 rounded-lg overflow-hidden border border-gray-200 shrink-0">
@@ -251,7 +251,7 @@ export default function BuilderClient() {
         </section>
 
         {/* ── Skill Pool ── */}
-        <section className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2">
+        <section id="skill-pool" className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2">
           <h2 className="font-semibold text-gray-800 text-xs uppercase tracking-wide">Skill Pool</h2>
           {filledCount > 0 ? (() => {
             const filledSlots = team.map((s, i) => ({ slot: s, idx: i })).filter(({ slot }) => slot.hero !== null);
@@ -291,7 +291,7 @@ export default function BuilderClient() {
         </div>{/* end left stack */}
 
         {/* ── COL 2: Sequence ── */}
-        <section className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2 flex-1 min-w-0 self-start">
+        <section id="skill-sequence" className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2 flex-1 min-w-0 self-start">
           <h2 className="font-semibold text-gray-800 text-xs uppercase tracking-wide">Sequence</h2>
           <div>
             {sequence.length > 0 ? (
