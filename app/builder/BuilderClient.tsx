@@ -1,5 +1,5 @@
 "use client";
-import { useState, useId, useRef } from "react";
+import { useState, useId, useRef, useEffect } from "react";
 import { HEROES, Hero } from "@/app/data/heroes";
 import { toPng } from "html-to-image";
 
@@ -161,6 +161,20 @@ export default function BuilderClient() {
   const slot = team[activeSlot];
   const heroRow = activeSlot < frontCount ? "Front" : "Back";
   const [capturing, setCapturing] = useState(false);
+  const [dark, setDark] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("theme") === "dark";
+    setDark(saved);
+    document.documentElement.classList.toggle("dark", saved);
+  }, []);
+
+  function toggleTheme() {
+    const next = !dark;
+    setDark(next);
+    document.documentElement.classList.toggle("dark", next);
+    localStorage.setItem("theme", next ? "dark" : "light");
+  }
 
   async function captureImages() {
     setCapturing(true);
@@ -389,6 +403,20 @@ export default function BuilderClient() {
         </section>
 
       </div>
+
+      {/* ── FLOAT THEME TOGGLE ── */}
+      <button onClick={toggleTheme}
+        className="fixed bottom-5 right-20 z-40 w-12 h-12 rounded-full bg-gray-700 hover:bg-gray-600 active:scale-95 text-white shadow-lg flex items-center justify-center transition-all">
+        {dark ? (
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m8.66-9h-1M4.34 12h-1m15.07-6.07-.71.71M6.34 17.66l-.71.71m12.73 0-.71-.71M6.34 6.34l-.71-.71M12 8a4 4 0 100 8 4 4 0 000-8z" />
+          </svg>
+        ) : (
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+          </svg>
+        )}
+      </button>
 
       {/* ── FLOAT SHARE BUTTON ── */}
       <button onClick={captureImages} disabled={capturing}
