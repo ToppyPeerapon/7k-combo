@@ -1,7 +1,7 @@
 "use client";
 import { useState, useId, useRef } from "react";
 import { HEROES, Hero } from "@/app/data/heroes";
-import html2canvas from "html2canvas";
+import { toPng } from "html-to-image";
 
 type TeamSlot = {
   hero: Hero | null;
@@ -166,15 +166,15 @@ export default function BuilderClient() {
   async function captureImages() {
     setCapturing(true);
     try {
-      const opts = { backgroundColor: "#f9fafb", scale: 2, useCORS: true, logging: false };
+      const opts = { backgroundColor: "#f9fafb", pixelRatio: 2 };
       const detailEl = document.getElementById("share-detail-capture");
       const seqEl = document.getElementById("skill-sequence");
       if (!detailEl || !seqEl) return;
-      const [detailCanvas, seqCanvas] = await Promise.all([
-        html2canvas(detailEl, opts),
-        html2canvas(seqEl, opts),
+      const [detail, sequence] = await Promise.all([
+        toPng(detailEl, opts),
+        toPng(seqEl, opts),
       ]);
-      setShareImages({ detail: detailCanvas.toDataURL("image/png"), sequence: seqCanvas.toDataURL("image/png") });
+      setShareImages({ detail, sequence });
     } finally {
       setCapturing(false);
     }
