@@ -3,9 +3,10 @@
   "configurations": [
     {
       "name": "7k-builder",
-      "runtimeExecutable": "npm",
+      "runtimeExecutable": "/Users/peeraponchunpongthong/.nvm/versions/node/v22.22.1/bin/npm",
       "runtimeArgs": ["run", "dev"],
-      "port": 3000
+      "port": 3000,
+      "autoPort": true
     }
   ]
 }

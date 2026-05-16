@@ -118,7 +118,7 @@ export default function BuilderClient() {
   function renderSlot(s: TeamSlot, i: number) {
     const isActive = activeSlot === i;
     return (
-      <div key={i} className={`relative z-20 w-[110px] flex flex-col items-center gap-2 p-2 rounded-xl border-2 cursor-pointer transition-all shrink-0 ${isActive ? "border-blue-400 bg-blue-50" : "border-gray-100 bg-gray-50"}`}
+      <div key={i} className={`relative z-20 w-[85px] flex flex-col items-center gap-1.5 p-1.5 rounded-xl border-2 cursor-pointer transition-all shrink-0 ${isActive ? "border-blue-400 bg-blue-50" : "border-gray-100 bg-gray-50"}`}
         onClick={() => { setActiveSlot(i); if (!s.hero) setPickerOpen(i); }}>
         <div className="relative w-full">
           {s.hero ? (
@@ -130,19 +130,19 @@ export default function BuilderClient() {
                 className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600">×</button>
               <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-1 bg-black/65 rounded-b-xl py-1 px-1"
                 onClick={(e) => e.stopPropagation()}>
-                <span className="text-yellow-300 text-[11px] shrink-0">⚡</span>
+                <span className="text-yellow-300 text-[10px] shrink-0">⚡</span>
                 <input type="number" min={0} max={9999} value={s.speed}
                   onChange={(e) => updateField(i, "speed", e.target.value)}
                   onClick={(e) => e.stopPropagation()}
                   placeholder="SPD"
-                  className="w-10 text-center text-[11px] font-bold text-white bg-transparent outline-none placeholder:text-gray-400 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" />
+                  className="w-8 text-center text-[10px] font-bold text-white bg-transparent outline-none placeholder:text-gray-400 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" />
               </div>
             </>
           ) : (
-            <div className="w-full aspect-[3/4] rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 hover:border-blue-400 hover:text-blue-400 transition-colors text-2xl">+</div>
+            <div className="w-full aspect-[3/4] rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 hover:border-blue-400 hover:text-blue-400 transition-colors text-xl">+</div>
           )}
         </div>
-        <p className="text-[10px] text-center font-medium text-gray-700 leading-tight min-h-[2rem] flex items-center">
+        <p className="text-[10px] text-center font-medium text-gray-700 leading-tight min-h-[1.5rem] flex items-center">
           {s.hero ? s.hero.name : <span className="text-gray-400">Empty</span>}
         </p>
       </div>
@@ -153,46 +153,34 @@ export default function BuilderClient() {
   const heroRow = activeSlot < frontCount ? "Front" : "Back";
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <h1 className="text-xl font-bold text-gray-900">Team Builder</h1>
-        <p className="text-sm text-gray-500">สร้างทีม · วางแผนสกิล · เลือกไอเทม</p>
-      </div>
+    <div className="h-screen flex flex-col bg-gray-50 overflow-hidden">
+      <div className="flex-1 flex gap-3 p-3 min-h-0">
 
-      <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
-
-        {/* ── TOP ROW: Formation + Hero Detail ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-        {/* ── TEAM FORMATION ── */}
-        <section className="bg-white rounded-2xl border border-gray-200 p-5 space-y-4">
+        {/* ── COL 1: Formation ── */}
+        <section className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2 w-[280px] shrink-0">
           <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-gray-800 text-sm uppercase tracking-wide">Team Formation</h2>
-            {/* Formation picker */}
-            <div className="flex gap-1.5 bg-gray-100 rounded-xl p-1">
+            <h2 className="font-semibold text-gray-800 text-xs uppercase tracking-wide">Formation</h2>
+            <div className="flex gap-1 bg-gray-100 rounded-xl p-0.5">
               {FORMATIONS.map(f => (
                 <button key={f} onClick={() => setFormation(f)}
-                  className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${formation === f ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
+                  className={`px-2 py-0.5 text-[10px] font-bold rounded-lg transition-all ${formation === f ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
                   {f}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Formation field — unified view */}
-          <div className="space-y-3">
-            {/* Front row — F line passes through heroes */}
-            <div className="relative flex gap-3 justify-center">
+          <div className="space-y-2 flex-1 flex flex-col justify-center">
+            <div className="relative flex gap-2 justify-center">
               <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex items-center pointer-events-none z-10">
-                <span className="text-[11px] font-bold text-orange-500 shrink-0 pr-1.5">F</span>
+                <span className="text-[10px] font-bold text-orange-500 shrink-0 pr-1">F</span>
                 <div className="flex-1 border-t-2 border-dashed border-orange-300/70" />
               </div>
               {team.slice(0, frontCount).map((s, i) => renderSlot(s, i))}
             </div>
-            {/* Back row — B line passes through heroes */}
-            <div className="relative flex gap-3 justify-center">
+            <div className="relative flex gap-2 justify-center">
               <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex items-center pointer-events-none z-10">
-                <span className="text-[11px] font-bold text-indigo-400 shrink-0 pr-1.5">B</span>
+                <span className="text-[10px] font-bold text-indigo-400 shrink-0 pr-1">B</span>
                 <div className="flex-1 border-t-2 border-dashed border-indigo-300/70" />
               </div>
               {team.slice(frontCount).map((s, i) => renderSlot(s, frontCount + i))}
@@ -200,97 +188,92 @@ export default function BuilderClient() {
           </div>
         </section>
 
-          {/* ── HERO DETAIL PANEL ── */}
-          <section className="bg-white rounded-2xl border border-gray-200 p-5 space-y-4">
-            <div className="flex items-center gap-3">
-              {slot.hero ? (
-                <div className="w-12 h-16 rounded-xl overflow-hidden border border-gray-200 shrink-0">
-                  <img src={slot.hero.image} alt={slot.hero.name} className="object-cover object-top w-full h-full" />
-                </div>
-              ) : (
-                <div className="w-12 h-16 rounded-xl bg-gray-100 shrink-0" />
-              )}
-              <div className="flex-1">
-                <h2 className="font-semibold text-gray-800">{slot.hero?.name ?? "ยังไม่ได้เลือก"}</h2>
-                <p className="text-xs text-gray-400">{heroRow} row · Slot {activeSlot + 1}</p>
+        {/* ── COL 2: Hero Detail ── */}
+        <section className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2 w-[240px] shrink-0">
+          <div className="flex items-center gap-2">
+            {slot.hero ? (
+              <div className="w-9 h-12 rounded-lg overflow-hidden border border-gray-200 shrink-0">
+                <img src={slot.hero.image} alt={slot.hero.name} className="object-cover object-top w-full h-full" />
               </div>
-              {!slot.hero && (
-                <button onClick={() => setPickerOpen(activeSlot)} className="text-sm text-blue-500 hover:underline shrink-0">เลือกฮีโร่</button>
-              )}
+            ) : (
+              <div className="w-9 h-12 rounded-lg bg-gray-100 shrink-0" />
+            )}
+            <div className="flex-1 min-w-0">
+              <h2 className="font-semibold text-gray-800 text-sm truncate">{slot.hero?.name ?? "ยังไม่ได้เลือก"}</h2>
+              <p className="text-[10px] text-gray-400">{heroRow} · Slot {activeSlot + 1}</p>
             </div>
+            {!slot.hero && (
+              <button onClick={() => setPickerOpen(activeSlot)} className="text-xs text-blue-500 hover:underline shrink-0">เลือก</button>
+            )}
+          </div>
 
-            {/* Speed */}
-            <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
-              <span className="text-2xl shrink-0">⚡</span>
-              <div className="flex-1">
-                <p className="text-[10px] text-amber-600 font-semibold uppercase tracking-wide">Speed</p>
-                <input type="number" min={0} max={9999}
-                  value={team[activeSlot].speed}
-                  onChange={(e) => updateField(activeSlot, "speed", e.target.value)}
-                  placeholder="0"
-                  className="text-2xl font-bold w-full outline-none bg-transparent text-amber-800 placeholder:text-amber-300 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" />
-              </div>
+          <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
+            <span className="text-lg shrink-0">⚡</span>
+            <div className="flex-1">
+              <p className="text-[9px] text-amber-600 font-semibold uppercase tracking-wide">Speed</p>
+              <input type="number" min={0} max={9999}
+                value={team[activeSlot].speed}
+                onChange={(e) => updateField(activeSlot, "speed", e.target.value)}
+                placeholder="0"
+                className="text-xl font-bold w-full outline-none bg-transparent text-amber-800 placeholder:text-amber-300 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" />
             </div>
+          </div>
 
-            {/* Weapon badges */}
-            <div className="space-y-1.5">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">⚔️ Weapon</p>
-              <div className="flex flex-wrap gap-1.5">
-                {STAT_BADGES.map((b, idx) => {
-                  const active = team[activeSlot].weapon.includes(b.id);
-                  return (
-                    <button key={b.id} onClick={() => toggleBadge(activeSlot, b.id)}
-                      className={`flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full border transition-all ${active ? b.on : b.off}`}>
-                      {b.label}
-                    </button>
-                  );
-                })}
-              </div>
+          <div className="space-y-1">
+            <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">⚔️ Weapon</p>
+            <div className="flex flex-wrap gap-1">
+              {STAT_BADGES.map((b) => {
+                const active = team[activeSlot].weapon.includes(b.id);
+                return (
+                  <button key={b.id} onClick={() => toggleBadge(activeSlot, b.id)}
+                    className={`text-[10px] font-medium px-2 py-0.5 rounded-full border transition-all ${active ? b.on : b.off}`}>
+                    {b.label}
+                  </button>
+                );
+              })}
             </div>
+          </div>
 
-            {/* Notes */}
-            <div className="space-y-1.5">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Notes / Stats</p>
-              <textarea value={team[activeSlot].notes}
-                onChange={(e) => updateField(activeSlot, "notes", e.target.value)}
-                placeholder="เช่น อัตราคริติคอล 90%, อัตราจุดอ่อน มากที่สุด..."
-                rows={3}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-200 transition resize-none" />
-            </div>
-          </section>
+          <div className="space-y-1 flex-1 flex flex-col">
+            <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">Notes</p>
+            <textarea value={team[activeSlot].notes}
+              onChange={(e) => updateField(activeSlot, "notes", e.target.value)}
+              placeholder="เช่น คริติคอล 90%, จุดอ่อน..."
+              rows={2}
+              className="w-full flex-1 border border-gray-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-2 focus:ring-blue-200 transition resize-none" />
+          </div>
+        </section>
 
-        </div>{/* end top row grid */}
+        {/* ── COL 3: Skill Sequence ── */}
+        <section className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2 flex-1 min-w-0">
+          <div className="flex gap-4 flex-1 min-h-0">
 
-        {/* ── SKILL SEQUENCE ── full width */}
-        <section className="bg-white rounded-2xl border border-gray-200 p-5">
-          <div className="flex gap-5">
-
-            {/* LEFT: Skill Pool */}
-            <div className="shrink-0 space-y-3">
-              <h2 className="font-semibold text-gray-800 text-sm uppercase tracking-wide">Skill Pool</h2>
+            {/* Skill Pool */}
+            <div className="shrink-0 flex flex-col gap-2">
+              <h2 className="font-semibold text-gray-800 text-xs uppercase tracking-wide">Skill Pool</h2>
               {filledCount > 0 ? (() => {
                 const filledSlots = team.map((s, i) => ({ slot: s, idx: i })).filter(({ slot }) => slot.hero !== null);
                 return (
-                  <div className="bg-gray-50 rounded-xl p-3 space-y-2">
-                    <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wide">คลิกสกิลเพื่อเพิ่ม</p>
-                    <div className="grid gap-x-3 gap-y-2" style={{ gridTemplateColumns: `repeat(${filledSlots.length}, minmax(56px, 56px))` }}>
+                  <div className="bg-gray-50 rounded-xl p-2 space-y-1.5">
+                    <p className="text-[9px] text-gray-400 font-semibold uppercase tracking-wide">คลิกสกิลเพื่อเพิ่ม</p>
+                    <div className="grid gap-x-2 gap-y-1.5" style={{ gridTemplateColumns: `repeat(${filledSlots.length}, minmax(48px, 48px))` }}>
                       {filledSlots.map(({ slot, idx }) => (
                         <div key={`h-${idx}`} className="flex justify-center">
-                          <div className="w-10 h-10 rounded-lg overflow-hidden border border-gray-200">
+                          <div className="w-8 h-8 rounded-lg overflow-hidden border border-gray-200">
                             <img src={slot.hero!.image} alt={slot.hero!.name} className="object-cover object-top w-full h-full" />
                           </div>
                         </div>
                       ))}
                       {filledSlots.map(({ slot, idx }) => (
                         <button key={`s2-${idx}`} onClick={() => addStep(idx, 2)}
-                          className="w-14 h-14 rounded-xl overflow-hidden border-2 border-gray-200 hover:border-blue-400 hover:scale-110 active:scale-95 transition-all bg-gray-100">
+                          className="w-12 h-12 rounded-xl overflow-hidden border-2 border-gray-200 hover:border-blue-400 hover:scale-110 active:scale-95 transition-all bg-gray-100">
                           <img src={skillImg(slot.hero!, 2)} alt="skill 2" className="object-cover w-full h-full"
                             onError={(e) => { (e.target as HTMLImageElement).src = slot.hero!.image; }} />
                         </button>
                       ))}
                       {filledSlots.map(({ slot, idx }) => (
                         <button key={`s3-${idx}`} onClick={() => addStep(idx, 3)}
-                          className="w-14 h-14 rounded-xl overflow-hidden border-2 border-gray-200 hover:border-blue-400 hover:scale-110 active:scale-95 transition-all bg-gray-100">
+                          className="w-12 h-12 rounded-xl overflow-hidden border-2 border-gray-200 hover:border-blue-400 hover:scale-110 active:scale-95 transition-all bg-gray-100">
                           <img src={skillImg(slot.hero!, 3)} alt="skill 3" className="object-cover w-full h-full"
                             onError={(e) => { (e.target as HTMLImageElement).src = slot.hero!.image; }} />
                         </button>
@@ -299,74 +282,77 @@ export default function BuilderClient() {
                   </div>
                 );
               })() : (
-                <p className="text-sm text-gray-400 py-2">เพิ่มฮีโร่ในทีมก่อน</p>
+                <p className="text-xs text-gray-400">เพิ่มฮีโร่ในทีมก่อน</p>
               )}
             </div>
 
             {/* Divider */}
-            <div className="w-px bg-gray-100 self-stretch" />
+            <div className="w-px bg-gray-100 self-stretch shrink-0" />
 
-            {/* RIGHT: Sequence */}
-            <div className="flex-1 space-y-3 min-w-0">
-              <h2 className="font-semibold text-gray-800 text-sm uppercase tracking-wide">Sequence</h2>
-              {sequence.length > 0 ? (
-                <div className="flex flex-wrap gap-3 items-start">
-                  {previewSequence.map((step, idx) => {
-                    const heroSlot = team[step.slotIndex];
-                    const isBeingDragged = dragFrom !== null && sequence[dragFrom]?.id === step.id && isDragging;
-                    const isPreviewTarget = idx === movedToIdx;
-                    return (
-                      <div
-                        key={step.id}
-                        draggable
-                        onDragStart={(e) => {
-                          const originalIdx = sequence.indexOf(step);
-                          dragFromRef.current = originalIdx;
-                          setDragFrom(originalIdx);
-                          e.dataTransfer.effectAllowed = "move";
-                        }}
-                        onDragOver={(e) => {
-                          e.preventDefault();
-                          const originalIdx = sequence.indexOf(step);
-                          if (originalIdx === dragFromRef.current) return;
-                          const rect = e.currentTarget.getBoundingClientRect();
-                          setDragInsertPos(e.clientX < rect.left + rect.width / 2 ? originalIdx : originalIdx + 1);
-                        }}
-                        onDrop={(e) => {
-                          e.preventDefault();
-                          if (dragFromRef.current !== null && dragInsertPos !== null) insertStep(dragFromRef.current, dragInsertPos);
-                          dragFromRef.current = null; setDragFrom(null); setDragInsertPos(null);
-                        }}
-                        onDragEnd={() => { dragFromRef.current = null; setDragFrom(null); setDragInsertPos(null); }}
-                        className={`flex flex-col items-center gap-1.5 rounded-xl p-2 w-[100px] shrink-0 cursor-grab active:cursor-grabbing select-none transition-all border-2
-                          ${isPreviewTarget ? "border-blue-400 bg-blue-50 scale-105 shadow-md" : "border-gray-100 bg-gray-50"}
-                          ${isBeingDragged ? "opacity-30" : "opacity-100"}`}>
-                        <span className="pointer-events-none w-6 h-6 rounded-full bg-gray-200 text-gray-600 text-[11px] font-bold flex items-center justify-center">
-                          {idx + 1}
-                        </span>
-                        <div className="pointer-events-none w-16 h-16 rounded-xl overflow-hidden border-2 border-gray-200 bg-gray-100 shrink-0">
-                          {heroSlot.hero && (
-                            <img src={skillImg(heroSlot.hero, step.skillNum)} alt=""
-                              className="object-cover w-full h-full"
-                              onError={(e) => { (e.target as HTMLImageElement).src = heroSlot.hero!.image; }} />
-                          )}
+            {/* Sequence */}
+            <div className="flex-1 flex flex-col gap-2 min-w-0">
+              <h2 className="font-semibold text-gray-800 text-xs uppercase tracking-wide">Sequence</h2>
+              <div className="flex-1 overflow-x-auto overflow-y-hidden">
+                {sequence.length > 0 ? (
+                  <div className="flex gap-2 items-start h-full">
+                    {previewSequence.map((step, idx) => {
+                      const heroSlot = team[step.slotIndex];
+                      const isBeingDragged = dragFrom !== null && sequence[dragFrom]?.id === step.id && isDragging;
+                      const isPreviewTarget = idx === movedToIdx;
+                      return (
+                        <div
+                          key={step.id}
+                          draggable
+                          onDragStart={(e) => {
+                            const originalIdx = sequence.indexOf(step);
+                            dragFromRef.current = originalIdx;
+                            setDragFrom(originalIdx);
+                            e.dataTransfer.effectAllowed = "move";
+                          }}
+                          onDragOver={(e) => {
+                            e.preventDefault();
+                            const originalIdx = sequence.indexOf(step);
+                            if (originalIdx === dragFromRef.current) return;
+                            const rect = e.currentTarget.getBoundingClientRect();
+                            setDragInsertPos(e.clientX < rect.left + rect.width / 2 ? originalIdx : originalIdx + 1);
+                          }}
+                          onDrop={(e) => {
+                            e.preventDefault();
+                            if (dragFromRef.current !== null && dragInsertPos !== null) insertStep(dragFromRef.current, dragInsertPos);
+                            dragFromRef.current = null; setDragFrom(null); setDragInsertPos(null);
+                          }}
+                          onDragEnd={() => { dragFromRef.current = null; setDragFrom(null); setDragInsertPos(null); }}
+                          className={`flex flex-col items-center gap-1 rounded-xl p-1.5 w-[80px] shrink-0 cursor-grab active:cursor-grabbing select-none transition-all border-2
+                            ${isPreviewTarget ? "border-blue-400 bg-blue-50 scale-105 shadow-md" : "border-gray-100 bg-gray-50"}
+                            ${isBeingDragged ? "opacity-30" : "opacity-100"}`}>
+                          <span className="pointer-events-none w-5 h-5 rounded-full bg-gray-200 text-gray-600 text-[10px] font-bold flex items-center justify-center">
+                            {idx + 1}
+                          </span>
+                          <div className="pointer-events-none w-12 h-12 rounded-xl overflow-hidden border-2 border-gray-200 bg-gray-100 shrink-0">
+                            {heroSlot.hero && (
+                              <img src={skillImg(heroSlot.hero, step.skillNum)} alt=""
+                                className="object-cover w-full h-full"
+                                onError={(e) => { (e.target as HTMLImageElement).src = heroSlot.hero!.image; }} />
+                            )}
+                          </div>
+                          <span className="pointer-events-none text-[9px] text-gray-500 font-semibold">S{step.skillNum}</span>
+                          <button onClick={(e) => { e.stopPropagation(); removeStep(step.id); }}
+                            className="w-full py-0.5 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 transition text-xs font-bold flex items-center justify-center border border-red-100 hover:border-red-200">
+                            ×
+                          </button>
                         </div>
-                        <span className="pointer-events-none text-[10px] text-gray-500 font-semibold">S{step.skillNum}</span>
-                        <button onClick={(e) => { e.stopPropagation(); removeStep(step.id); }}
-                          className="w-full py-1 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 transition text-sm font-bold flex items-center justify-center border border-red-100 hover:border-red-200">
-                          ×
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <p className="text-sm text-gray-400">คลิกสกิลในช่อง Pool เพื่อเพิ่ม</p>
-              )}
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="text-xs text-gray-400">คลิกสกิลในช่อง Pool เพื่อเพิ่ม</p>
+                )}
+              </div>
             </div>
 
           </div>
         </section>
+
       </div>
 
       {/* ── HERO PICKER MODAL ── */}
