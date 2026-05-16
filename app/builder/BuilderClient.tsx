@@ -303,6 +303,7 @@ export default function BuilderClient() {
                       return (
                         <div
                           key={step.id}
+                          id={`seq-step-${idx + 1}`}
                           draggable
                           onDragStart={(e) => {
                             const originalIdx = sequence.indexOf(step);
