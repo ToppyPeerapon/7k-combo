@@ -96,6 +96,14 @@ export default function BuilderClient() {
     setTeam(prev => { const next = [...prev]; next[i] = { ...next[i], [field]: value }; return next; });
   }
 
+  function setPriority(i: number, value: string) {
+    setTeam(prev => prev.map((s, idx) => {
+      if (idx === i) return { ...s, speed: s.speed === value ? "" : value };
+      if (s.speed === value) return { ...s, speed: "" };
+      return s;
+    }));
+  }
+
   function addStep(slotIndex: number, skillNum: 2 | 3) {
     setSequence(prev => [...prev, { id: `${uid}-${Date.now()}-${Math.random()}`, slotIndex, skillNum }]);
   }
@@ -191,63 +199,63 @@ export default function BuilderClient() {
           </div>
         </section>
 
-        {/* ── Hero Detail ── */}
-        <section id="hero-detail" className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            {slot.hero ? (
-              <div className="w-9 h-12 rounded-lg overflow-hidden border border-gray-200 shrink-0">
-                <img src={slot.hero.image} alt={slot.hero.name} className="object-cover object-top w-full h-full" />
+        {/* ── Hero Detail (all slots) ── */}
+        <section id="hero-detail" className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-3">
+          <h2 className="font-semibold text-gray-800 text-xs uppercase tracking-wide">Hero Detail</h2>
+          {team.map((s, i) => {
+            const row = i < frontCount ? "F" : "B";
+            return (
+              <div key={i} className={`flex flex-col gap-1.5 pb-3 ${i < 4 ? "border-b border-gray-100" : ""}`}>
+                {/* Hero header */}
+                <div className="flex items-center gap-2">
+                  {s.hero ? (
+                    <div className="w-8 h-10 rounded-lg overflow-hidden border border-gray-200 shrink-0">
+                      <img src={s.hero.image} alt={s.hero.name} className="object-cover object-top w-full h-full" />
+                    </div>
+                  ) : (
+                    <div className="w-8 h-10 rounded-lg bg-gray-100 border border-dashed border-gray-300 shrink-0" />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-gray-800 text-xs truncate">{s.hero?.name ?? <span className="text-gray-400">Empty</span>}</p>
+                    <p className="text-[9px] text-gray-400">{row} · Slot {i + 1}</p>
+                  </div>
+                  {!s.hero && (
+                    <button onClick={() => { setActiveSlot(i); setPickerOpen(i); }} className="text-[10px] text-blue-500 hover:underline shrink-0">เลือก</button>
+                  )}
+                </div>
+                {/* Speed priority */}
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map(n => {
+                    const active = s.speed === String(n);
+                    return (
+                      <button key={n} onClick={() => setPriority(i, String(n))}
+                        className={`flex-1 py-0.5 rounded text-[10px] font-bold border transition-all ${active ? "bg-amber-400 text-white border-amber-400" : "bg-white text-gray-400 border-gray-200 hover:border-amber-300 hover:text-amber-500"}`}>
+                        {n}
+                      </button>
+                    );
+                  })}
+                </div>
+                {/* Weapon badges */}
+                <div className="flex flex-wrap gap-1">
+                  {STAT_BADGES.map(b => {
+                    const active = s.weapon.includes(b.id);
+                    return (
+                      <button key={b.id} onClick={() => toggleBadge(i, b.id)}
+                        className={`text-[9px] font-medium px-1.5 py-0.5 rounded-full border transition-all ${active ? b.on : b.off}`}>
+                        {b.label}
+                      </button>
+                    );
+                  })}
+                </div>
+                {/* Notes */}
+                <textarea value={s.notes}
+                  onChange={(e) => updateField(i, "notes", e.target.value)}
+                  placeholder="Notes..."
+                  rows={1}
+                  className="w-full border border-gray-200 rounded-lg px-2 py-1 text-[10px] outline-none focus:ring-2 focus:ring-blue-200 transition resize-none" />
               </div>
-            ) : (
-              <div className="w-9 h-12 rounded-lg bg-gray-100 shrink-0" />
-            )}
-            <div className="flex-1 min-w-0">
-              <h2 className="font-semibold text-gray-800 text-sm truncate">{slot.hero?.name ?? "ยังไม่ได้เลือก"}</h2>
-              <p className="text-[10px] text-gray-400">{heroRow} · Slot {activeSlot + 1}</p>
-            </div>
-            {!slot.hero && (
-              <button onClick={() => setPickerOpen(activeSlot)} className="text-xs text-blue-500 hover:underline shrink-0">เลือก</button>
-            )}
-          </div>
-
-          <div className="space-y-1">
-            <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">⚡ Speed Priority</p>
-            <div className="flex gap-1">
-              {[1, 2, 3, 4, 5].map(n => {
-                const active = team[activeSlot].speed === String(n);
-                return (
-                  <button key={n} onClick={() => updateField(activeSlot, "speed", active ? "" : String(n))}
-                    className={`flex-1 py-1 rounded-lg text-xs font-bold border transition-all ${active ? "bg-amber-400 text-white border-amber-400" : "bg-white text-gray-500 border-gray-200 hover:border-amber-300 hover:text-amber-600"}`}>
-                    {n}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">⚔️ Weapon</p>
-            <div className="flex flex-wrap gap-1">
-              {STAT_BADGES.map((b) => {
-                const active = team[activeSlot].weapon.includes(b.id);
-                return (
-                  <button key={b.id} onClick={() => toggleBadge(activeSlot, b.id)}
-                    className={`text-[10px] font-medium px-2 py-0.5 rounded-full border transition-all ${active ? b.on : b.off}`}>
-                    {b.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">Notes</p>
-            <textarea value={team[activeSlot].notes}
-              onChange={(e) => updateField(activeSlot, "notes", e.target.value)}
-              placeholder="เช่น คริติคอล 90%, จุดอ่อน..."
-              rows={2}
-              className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-2 focus:ring-blue-200 transition resize-none" />
-          </div>
+            );
+          })}
         </section>
 
         {/* ── Skill Pool ── */}
@@ -337,7 +345,6 @@ export default function BuilderClient() {
                                 onError={(e) => { (e.target as HTMLImageElement).src = heroSlot.hero!.image; }} />
                             )}
                           </div>
-                          <span className="pointer-events-none text-[9px] text-gray-500 font-semibold">S{step.skillNum}</span>
                           <button onClick={(e) => { e.stopPropagation(); removeStep(step.id); }}
                             className="w-full py-0.5 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 transition text-[10px] font-bold flex items-center justify-center border border-red-100 hover:border-red-200">
                             ×
