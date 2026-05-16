@@ -210,15 +210,18 @@ export default function BuilderClient() {
             )}
           </div>
 
-          <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
-            <span className="text-lg shrink-0">⚡</span>
-            <div className="flex-1">
-              <p className="text-[9px] text-amber-600 font-semibold uppercase tracking-wide">Speed</p>
-              <input type="number" min={0} max={9999}
-                value={team[activeSlot].speed}
-                onChange={(e) => updateField(activeSlot, "speed", e.target.value)}
-                placeholder="0"
-                className="text-xl font-bold w-full outline-none bg-transparent text-amber-800 placeholder:text-amber-300 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" />
+          <div className="space-y-1">
+            <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">⚡ Speed Priority</p>
+            <div className="flex gap-1">
+              {[1, 2, 3, 4, 5].map(n => {
+                const active = team[activeSlot].speed === String(n);
+                return (
+                  <button key={n} onClick={() => updateField(activeSlot, "speed", active ? "" : String(n))}
+                    className={`flex-1 py-1 rounded-lg text-xs font-bold border transition-all ${active ? "bg-amber-400 text-white border-amber-400" : "bg-white text-gray-500 border-gray-200 hover:border-amber-300 hover:text-amber-600"}`}>
+                    {n}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -320,22 +323,22 @@ export default function BuilderClient() {
                             dragFromRef.current = null; setDragFrom(null); setDragInsertPos(null);
                           }}
                           onDragEnd={() => { dragFromRef.current = null; setDragFrom(null); setDragInsertPos(null); }}
-                          className={`flex flex-col items-center gap-1 rounded-xl p-1.5 w-[80px] shrink-0 cursor-grab active:cursor-grabbing select-none transition-all border-2
+                          className={`flex flex-col items-center gap-0.5 rounded-lg p-1 w-[56px] shrink-0 cursor-grab active:cursor-grabbing select-none transition-all border-2
                             ${isPreviewTarget ? "border-blue-400 bg-blue-50 scale-105 shadow-md" : "border-gray-100 bg-gray-50"}
                             ${isBeingDragged ? "opacity-30" : "opacity-100"}`}>
-                          <span className="pointer-events-none w-5 h-5 rounded-full bg-gray-200 text-gray-600 text-[10px] font-bold flex items-center justify-center">
+                          <span className="pointer-events-none w-4 h-4 rounded-full bg-gray-200 text-gray-600 text-[9px] font-bold flex items-center justify-center">
                             {idx + 1}
                           </span>
-                          <div className="pointer-events-none w-12 h-12 rounded-xl overflow-hidden border-2 border-gray-200 bg-gray-100 shrink-0">
+                          <div className="pointer-events-none w-9 h-9 rounded-lg overflow-hidden border border-gray-200 bg-gray-100 shrink-0">
                             {heroSlot.hero && (
                               <img src={skillImg(heroSlot.hero, step.skillNum)} alt=""
                                 className="object-cover w-full h-full"
                                 onError={(e) => { (e.target as HTMLImageElement).src = heroSlot.hero!.image; }} />
                             )}
                           </div>
-                          <span className="pointer-events-none text-[9px] text-gray-500 font-semibold">S{step.skillNum}</span>
+                          <span className="pointer-events-none text-[8px] text-gray-500 font-semibold">S{step.skillNum}</span>
                           <button onClick={(e) => { e.stopPropagation(); removeStep(step.id); }}
-                            className="w-full py-0.5 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 transition text-xs font-bold flex items-center justify-center border border-red-100 hover:border-red-200">
+                            className="w-full py-0.5 rounded text-red-400 hover:text-red-600 hover:bg-red-50 transition text-[10px] font-bold flex items-center justify-center border border-red-100 hover:border-red-200">
                             ×
                           </button>
                         </div>
