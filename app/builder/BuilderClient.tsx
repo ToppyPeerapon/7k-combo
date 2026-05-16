@@ -40,6 +40,9 @@ export default function BuilderClient() {
   const [dragFrom, setDragFrom] = useState<number | null>(null);
   const [dragInsertPos, setDragInsertPos] = useState<number | null>(null);
 
+  const formationDragRef = useRef<number | null>(null);
+  const [formationDragOver, setFormationDragOver] = useState<number | null>(null);
+
   const [team, setTeam] = useState<TeamSlot[]>(Array.from({ length: 5 }, emptySlot));
   const [formation, setFormation] = useState<Formation>("2/3");
   const [sequence, setSequence] = useState<SkillStep[]>([]);
@@ -105,6 +108,20 @@ export default function BuilderClient() {
     }));
   }
 
+  function swapSlots(a: number, b: number) {
+    if (a === b) return;
+    setTeam(prev => {
+      const next = [...prev];
+      [next[a], next[b]] = [next[b], next[a]];
+      return next;
+    });
+    setSequence(prev => prev.map(step => {
+      if (step.slotIndex === a) return { ...step, slotIndex: b };
+      if (step.slotIndex === b) return { ...step, slotIndex: a };
+      return step;
+    }));
+  }
+
   function addStep(slotIndex: number, skillNum: 2 | 3) {
     setSequence(prev => [...prev, { id: `${uid}-${Date.now()}-${Math.random()}`, slotIndex, skillNum }]);
   }
@@ -127,7 +144,17 @@ export default function BuilderClient() {
   function renderSlot(s: TeamSlot, i: number) {
     const isActive = activeSlot === i;
     return (
-      <div key={i} className={`relative z-20 w-[85px] flex flex-col items-center gap-1.5 p-1.5 rounded-xl border-2 cursor-pointer transition-all shrink-0 ${isActive ? "border-blue-400 bg-blue-50" : "border-gray-100 bg-gray-50"}`}
+      <div key={i}
+        draggable={!!s.hero}
+        onDragStart={(e) => { formationDragRef.current = i; e.dataTransfer.effectAllowed = "move"; }}
+        onDragOver={(e) => { e.preventDefault(); setFormationDragOver(i); }}
+        onDragLeave={() => setFormationDragOver(null)}
+        onDrop={(e) => { e.preventDefault(); if (formationDragRef.current !== null) swapSlots(formationDragRef.current, i); formationDragRef.current = null; setFormationDragOver(null); }}
+        onDragEnd={() => { formationDragRef.current = null; setFormationDragOver(null); }}
+        className={`relative z-20 w-[85px] flex flex-col items-center gap-1.5 p-1.5 rounded-xl border-2 transition-all shrink-0
+          ${isActive ? "border-blue-400 bg-blue-50" : "border-gray-100 bg-gray-50"}
+          ${formationDragOver === i ? "border-blue-400 bg-blue-50 scale-105 shadow-md" : ""}
+          ${s.hero ? "cursor-grab active:cursor-grabbing" : "cursor-pointer"}`}
         onClick={() => { setActiveSlot(i); if (!s.hero) setPickerOpen(i); }}>
         <div className="relative w-full">
           {s.hero ? (
@@ -137,15 +164,6 @@ export default function BuilderClient() {
               </div>
               <button onClick={(e) => { e.stopPropagation(); removeHero(i); }}
                 className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600">×</button>
-              <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-1 bg-black/65 rounded-b-xl py-1 px-1"
-                onClick={(e) => e.stopPropagation()}>
-                <span className="text-yellow-300 text-[10px] shrink-0">⚡</span>
-                <input type="number" min={0} max={9999} value={s.speed}
-                  onChange={(e) => updateField(i, "speed", e.target.value)}
-                  onClick={(e) => e.stopPropagation()}
-                  placeholder="SPD"
-                  className="w-8 text-center text-[10px] font-bold text-white bg-transparent outline-none placeholder:text-gray-400 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" />
-              </div>
             </>
           ) : (
             <div className="w-full aspect-[3/4] rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 hover:border-blue-400 hover:text-blue-400 transition-colors text-xl">+</div>
@@ -454,11 +472,11 @@ export default function BuilderClient() {
                 const inTeam = usedIds.includes(hero.id);
                 return (
                   <button key={hero.id} onClick={() => !inTeam && selectHero(hero)} disabled={inTeam}
-                    className={`flex flex-col items-center gap-1 p-1.5 rounded-xl border transition ${inTeam ? "opacity-30 cursor-not-allowed border-gray-100" : "hover:border-blue-300 hover:bg-blue-50 border-gray-100"}`}>
+                    className={`group flex flex-col items-center gap-1 p-1.5 rounded-xl border transition ${inTeam ? "opacity-30 cursor-not-allowed border-gray-100" : "hover:border-blue-300 hover:bg-blue-50 border-gray-100"}`}>
                     <div className="w-12 aspect-[3/4] rounded-lg overflow-hidden border border-gray-100">
                       <img src={hero.image} alt={hero.name} className="object-cover object-top w-full h-full" />
                     </div>
-                    <span className="text-[9px] text-center text-gray-600 leading-tight">{hero.name}</span>
+                    <span className="text-[9px] text-center text-gray-600 group-hover:!text-black leading-tight font-medium group-hover:!font-bold">{hero.name}</span>
                   </button>
                 );
               })}
