@@ -291,9 +291,9 @@ export default function BuilderClient() {
         </div>{/* end left stack */}
 
         {/* ── COL 2: Sequence ── */}
-        <section className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2 flex-1 min-w-0">
+        <section className="bg-white rounded-2xl border border-gray-200 p-3 flex flex-col gap-2 flex-1 min-w-0 self-start">
           <h2 className="font-semibold text-gray-800 text-xs uppercase tracking-wide">Sequence</h2>
-          <div className="flex-1 overflow-y-auto">
+          <div>
             {sequence.length > 0 ? (
               <div className="flex flex-wrap gap-2 content-start">
                 {previewSequence.map((step, idx) => {
@@ -323,13 +323,13 @@ export default function BuilderClient() {
                             dragFromRef.current = null; setDragFrom(null); setDragInsertPos(null);
                           }}
                           onDragEnd={() => { dragFromRef.current = null; setDragFrom(null); setDragInsertPos(null); }}
-                          className={`flex flex-col items-center gap-0.5 rounded-lg p-1 w-[44px] shrink-0 cursor-grab active:cursor-grabbing select-none transition-all border-2
+                          className={`flex flex-col items-center gap-0.5 rounded-lg p-1 w-[52px] shrink-0 cursor-grab active:cursor-grabbing select-none transition-all border-2
                             ${isPreviewTarget ? "border-blue-400 bg-blue-50 scale-105 shadow-md" : "border-gray-100 bg-gray-50"}
                             ${isBeingDragged ? "opacity-30" : "opacity-100"}`}>
-                          <span className="pointer-events-none w-3.5 h-3.5 rounded-full bg-gray-200 text-gray-600 text-[8px] font-bold flex items-center justify-center">
+                          <span className="pointer-events-none w-4 h-4 rounded-full bg-gray-200 text-gray-600 text-[9px] font-bold flex items-center justify-center">
                             {idx + 1}
                           </span>
-                          <div className="pointer-events-none w-7 h-7 rounded-md overflow-hidden border border-gray-200 bg-gray-100 shrink-0">
+                          <div className="pointer-events-none w-10 h-10 rounded-lg overflow-hidden border border-gray-200 bg-gray-100 shrink-0">
                             {heroSlot.hero && (
                               <img src={skillImg(heroSlot.hero, step.skillNum)} alt=""
                                 className="object-cover w-full h-full"
