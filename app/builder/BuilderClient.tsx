@@ -160,7 +160,6 @@ export default function BuilderClient() {
 
   const slot = team[activeSlot];
   const heroRow = activeSlot < frontCount ? "Front" : "Back";
-  const [shareImages, setShareImages] = useState<{ detail: string; sequence: string } | null>(null);
   const [capturing, setCapturing] = useState(false);
 
   async function captureImages() {
@@ -174,17 +173,15 @@ export default function BuilderClient() {
         toPng(detailEl, opts),
         toPng(seqEl, opts),
       ]);
-      setShareImages({ detail, sequence });
+      const dl = (url: string, name: string) => {
+        const a = document.createElement("a");
+        a.href = url; a.download = name; a.click();
+      };
+      dl(detail, "formation.png");
+      dl(sequence, "sequence.png");
     } finally {
       setCapturing(false);
     }
-  }
-
-  function downloadImage(dataUrl: string, name: string) {
-    const a = document.createElement("a");
-    a.href = dataUrl;
-    a.download = name;
-    a.click();
   }
 
   return (
@@ -407,40 +404,6 @@ export default function BuilderClient() {
           </svg>
         )}
       </button>
-
-      {/* ── SHARE PREVIEW MODAL ── */}
-      {shareImages && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4"
-          onClick={() => setShareImages(null)}>
-          <div className="bg-white rounded-2xl w-full max-w-3xl flex flex-col max-h-[90vh]"
-            onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between p-4 border-b border-gray-100 shrink-0">
-              <h2 className="font-bold text-gray-800">Share Images</h2>
-              <button onClick={() => setShareImages(null)} className="text-gray-400 hover:text-gray-700 text-xl w-7 h-7 flex items-center justify-center">×</button>
-            </div>
-            <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-6">
-              {/* Image 1 */}
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-gray-700">Formation & Hero Detail</p>
-                  <button onClick={() => downloadImage(shareImages.detail, "formation.png")}
-                    className="text-xs text-blue-500 hover:underline">Download</button>
-                </div>
-                <img src={shareImages.detail} alt="Formation" className="w-full rounded-xl border border-gray-200" />
-              </div>
-              {/* Image 2 */}
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-gray-700">Skill Sequence</p>
-                  <button onClick={() => downloadImage(shareImages.sequence, "sequence.png")}
-                    className="text-xs text-blue-500 hover:underline">Download</button>
-                </div>
-                <img src={shareImages.sequence} alt="Sequence" className="w-full rounded-xl border border-gray-200" />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* ── HERO PICKER MODAL ── */}
       {pickerOpen !== null && (
