@@ -467,7 +467,7 @@ export default function BuilderClient() {
             return (
               <div className="bg-gray-50 rounded-xl p-2 space-y-1.5">
                 <p className="text-[9px] text-gray-400 font-semibold uppercase tracking-wide">คลิกสกิลเพื่อเพิ่ม</p>
-                <div className="grid gap-x-2 gap-y-1.5" style={{ gridTemplateColumns: `repeat(${filledSlots.length}, minmax(44px, 44px))` }}>
+                <div className="grid gap-x-2 gap-y-1.5" style={{ gridTemplateColumns: `repeat(${filledSlots.length}, 1fr)` }}>
                   {filledSlots.map(({ slot, idx }) => (
                     <div key={`h-${idx}`} className="flex justify-center">
                       <div className="w-7 h-7 rounded-lg overflow-hidden border border-gray-200">
@@ -477,14 +477,14 @@ export default function BuilderClient() {
                   ))}
                   {filledSlots.map(({ slot, idx }) => (
                     <button key={`s2-${idx}`} onClick={() => addStep(idx, 2)}
-                      className="w-11 h-11 rounded-xl overflow-hidden border-2 border-gray-200 hover:border-blue-400 hover:scale-110 active:scale-95 transition-all bg-gray-100">
+                      className="w-full aspect-square rounded-xl overflow-hidden border-2 border-gray-200 hover:border-blue-400 hover:scale-110 active:scale-95 transition-all bg-gray-100">
                       <img src={skillImg(slot.hero!, 2)} alt="skill 2" className="object-cover w-full h-full"
                         onError={(e) => { (e.target as HTMLImageElement).src = slot.hero!.image; }} />
                     </button>
                   ))}
                   {filledSlots.map(({ slot, idx }) => (
                     <button key={`s3-${idx}`} onClick={() => addStep(idx, 3)}
-                      className="w-11 h-11 rounded-xl overflow-hidden border-2 border-gray-200 hover:border-blue-400 hover:scale-110 active:scale-95 transition-all bg-gray-100">
+                      className="w-full aspect-square rounded-xl overflow-hidden border-2 border-gray-200 hover:border-blue-400 hover:scale-110 active:scale-95 transition-all bg-gray-100">
                       <img src={skillImg(slot.hero!, 3)} alt="skill 3" className="object-cover w-full h-full"
                         onError={(e) => { (e.target as HTMLImageElement).src = slot.hero!.image; }} />
                     </button>
@@ -510,7 +510,7 @@ export default function BuilderClient() {
             return (
               <div className="bg-gray-50 rounded-xl p-2 space-y-1.5">
                 <p className="text-[9px] text-gray-400 font-semibold uppercase tracking-wide">คลิกสกิลเพื่อเพิ่ม</p>
-                <div className="grid gap-x-2 gap-y-1.5" style={{ gridTemplateColumns: `repeat(${filledSlots.length}, minmax(44px, 44px))` }}>
+                <div className="grid gap-x-2 gap-y-1.5" style={{ gridTemplateColumns: `repeat(${filledSlots.length}, 1fr)` }}>
                   {filledSlots.map(({ slot, idx }) => (
                     <div key={`h-${idx}`} className="flex justify-center">
                       <div className="w-7 h-7 rounded-lg overflow-hidden border border-gray-200">
@@ -520,14 +520,14 @@ export default function BuilderClient() {
                   ))}
                   {filledSlots.map(({ slot, idx }) => (
                     <button key={`s2-${idx}`} onClick={() => addStep(idx, 2)}
-                      className="w-11 h-11 rounded-xl overflow-hidden border-2 border-gray-200 hover:border-blue-400 hover:scale-110 active:scale-95 transition-all bg-gray-100">
+                      className="w-full aspect-square rounded-xl overflow-hidden border-2 border-gray-200 hover:border-blue-400 hover:scale-110 active:scale-95 transition-all bg-gray-100">
                       <img src={skillImg(slot.hero!, 2)} alt="skill 2" className="object-cover w-full h-full"
                         onError={(e) => { (e.target as HTMLImageElement).src = slot.hero!.image; }} />
                     </button>
                   ))}
                   {filledSlots.map(({ slot, idx }) => (
                     <button key={`s3-${idx}`} onClick={() => addStep(idx, 3)}
-                      className="w-11 h-11 rounded-xl overflow-hidden border-2 border-gray-200 hover:border-blue-400 hover:scale-110 active:scale-95 transition-all bg-gray-100">
+                      className="w-full aspect-square rounded-xl overflow-hidden border-2 border-gray-200 hover:border-blue-400 hover:scale-110 active:scale-95 transition-all bg-gray-100">
                       <img src={skillImg(slot.hero!, 3)} alt="skill 3" className="object-cover w-full h-full"
                         onError={(e) => { (e.target as HTMLImageElement).src = slot.hero!.image; }} />
                     </button>
