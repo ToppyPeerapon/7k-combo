@@ -180,6 +180,7 @@ export default function BuilderClient() {
   const slot = team[activeSlot];
   const heroRow = activeSlot < frontCount ? "Front" : "Back";
   const [capturing, setCapturing] = useState(false);
+  const [downloadModal, setDownloadModal] = useState<{ detail: string; seq: string } | null>(null);
   const [dark, setDark] = useState(false);
   const [mobileTab, setMobileTab] = useState<"formation" | "skills">("formation");
 
@@ -196,7 +197,33 @@ export default function BuilderClient() {
     localStorage.setItem("theme", next ? "dark" : "light");
   }
 
+  function downloadImages(detail: string, seq: string) {
+    const dl = (url: string, name: string) => {
+      const a = document.createElement("a");
+      a.href = url; a.download = name; a.click();
+    };
+    dl(detail, "formation.png");
+    dl(seq, "sequence.png");
+  }
+
   async function captureImages() {
+    setCapturing(true);
+    try {
+      const opts = { backgroundColor: "#f9fafb", pixelRatio: 2 };
+      const detailEl = document.getElementById("share-detail-capture");
+      const seqEl = document.getElementById("skill-sequence");
+      if (!detailEl || !seqEl) return;
+      const [detailUrl, seqUrl] = await Promise.all([
+        toPng(detailEl, opts),
+        toPng(seqEl, opts),
+      ]);
+      setDownloadModal({ detail: detailUrl, seq: seqUrl });
+    } finally {
+      setCapturing(false);
+    }
+  }
+
+  async function captureAndShare() {
     setCapturing(true);
     try {
       const opts = { backgroundColor: "#f9fafb", pixelRatio: 2 };
@@ -222,13 +249,7 @@ export default function BuilderClient() {
         await navigator.share({ files, title: "7K Builder Team" });
         return;
       }
-
-      const dl = (url: string, name: string) => {
-        const a = document.createElement("a");
-        a.href = url; a.download = name; a.click();
-      };
-      dl(detailUrl, "formation.png");
-      dl(seqUrl, "sequence.png");
+      downloadImages(detailUrl, seqUrl);
     } finally {
       setCapturing(false);
     }
@@ -275,10 +296,10 @@ export default function BuilderClient() {
               </svg>
             ) : (
               <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
               </svg>
             )}
-            Share
+            Download
           </button>
         </div>
       </nav>
@@ -590,7 +611,7 @@ export default function BuilderClient() {
 
 
       {/* ── FLOAT SHARE BUTTON (mobile only) ── */}
-      <button onClick={captureImages} disabled={capturing}
+      <button onClick={captureAndShare} disabled={capturing}
         className="md:hidden fixed bottom-5 right-5 z-40 h-12 px-4 rounded-full bg-blue-500 hover:bg-blue-600 active:scale-95 text-white shadow-lg flex items-center justify-center gap-2 transition-all disabled:opacity-60">
         {capturing ? (
           <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
@@ -606,6 +627,48 @@ export default function BuilderClient() {
           </>
         )}
       </button>
+
+      {/* ── DOWNLOAD PREVIEW MODAL ── */}
+      {downloadModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4"
+          onClick={() => setDownloadModal(null)}>
+          <div className="bg-white rounded-2xl w-full max-w-3xl flex flex-col shadow-2xl"
+            style={{ maxHeight: "90svh" }}
+            onClick={(e) => e.stopPropagation()}>
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 shrink-0">
+              <h2 className="font-semibold text-gray-800 text-sm">Preview</h2>
+              <button onClick={() => setDownloadModal(null)}
+                className="text-gray-400 hover:text-gray-700 text-xl w-7 h-7 flex items-center justify-center">×</button>
+            </div>
+            {/* Image previews */}
+            <div className="flex-1 overflow-y-auto p-4 flex flex-col sm:flex-row gap-3 min-h-0">
+              <div className="flex-1 flex flex-col gap-1.5">
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-400">Formation</p>
+                <img src={downloadModal.detail} alt="Formation preview" className="w-full rounded-xl border border-gray-200 object-contain" />
+              </div>
+              <div className="flex-1 flex flex-col gap-1.5">
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-400">Sequence</p>
+                <img src={downloadModal.seq} alt="Sequence preview" className="w-full rounded-xl border border-gray-200 object-contain" />
+              </div>
+            </div>
+            {/* Footer */}
+            <div className="flex items-center justify-end gap-2 px-5 py-3 border-t border-gray-100 shrink-0">
+              <button onClick={() => setDownloadModal(null)}
+                className="px-4 py-2 text-sm text-gray-500 hover:text-gray-800 rounded-lg hover:bg-gray-100 transition">
+                Cancel
+              </button>
+              <button onClick={() => { downloadImages(downloadModal.detail, downloadModal.seq); setDownloadModal(null); }}
+                className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-blue-500 hover:bg-blue-400 rounded-lg transition">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
+                </svg>
+                Download
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── HERO PICKER MODAL ── */}
       {pickerOpen !== null && (
