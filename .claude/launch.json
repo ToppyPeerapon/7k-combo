@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "7k-builder",
-      "runtimeExecutable": "/Users/peeraponchunpongthong/.nvm/versions/node/v22.22.1/bin/npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeExecutable": "/Users/peeraponchunpongthong/.nvm/versions/node/v22.22.1/bin/node",
+      "runtimeArgs": ["/Users/peeraponchunpongthong/7k-combo/node_modules/.bin/next", "dev"],
       "port": 3000,
       "autoPort": true
     }
