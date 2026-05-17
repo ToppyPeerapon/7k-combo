@@ -180,7 +180,7 @@ export default function BuilderClient() {
   const slot = team[activeSlot];
   const heroRow = activeSlot < frontCount ? "Front" : "Back";
   const [capturing, setCapturing] = useState(false);
-  const [downloadModal, setDownloadModal] = useState<{ detail: string; seq: string } | null>(null);
+  const [downloadModal, setDownloadModal] = useState<string | null>(null);
   const [dark, setDark] = useState(false);
   const [mobileTab, setMobileTab] = useState<"formation" | "skills">("formation");
 
@@ -197,13 +197,26 @@ export default function BuilderClient() {
     localStorage.setItem("theme", next ? "dark" : "light");
   }
 
-  function downloadImages(detail: string, seq: string) {
-    const dl = (url: string, name: string) => {
-      const a = document.createElement("a");
-      a.href = url; a.download = name; a.click();
-    };
-    dl(detail, "formation.png");
-    dl(seq, "sequence.png");
+  function downloadImage(url: string) {
+    const a = document.createElement("a");
+    a.href = url; a.download = "7k-team.png"; a.click();
+  }
+
+  async function combinePngs(urlA: string, urlB: string, gap = 16): Promise<string> {
+    const load = (src: string) => new Promise<HTMLImageElement>((res) => {
+      const img = new Image(); img.onload = () => res(img); img.src = src;
+    });
+    const [a, b] = await Promise.all([load(urlA), load(urlB)]);
+    const h = Math.max(a.height, b.height);
+    const canvas = document.createElement("canvas");
+    canvas.width = a.width + gap + b.width;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d")!;
+    ctx.fillStyle = "#f9fafb";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(a, 0, 0);
+    ctx.drawImage(b, a.width + gap, 0);
+    return canvas.toDataURL("image/png");
   }
 
   async function captureImages() {
@@ -213,11 +226,9 @@ export default function BuilderClient() {
       const detailEl = document.getElementById("share-detail-capture");
       const seqEl = document.getElementById("skill-sequence");
       if (!detailEl || !seqEl) return;
-      const [detailUrl, seqUrl] = await Promise.all([
-        toPng(detailEl, opts),
-        toPng(seqEl, opts),
-      ]);
-      setDownloadModal({ detail: detailUrl, seq: seqUrl });
+      const [detailUrl, seqUrl] = await Promise.all([toPng(detailEl, opts), toPng(seqEl, opts)]);
+      const combined = await combinePngs(detailUrl, seqUrl);
+      setDownloadModal(combined);
     } finally {
       setCapturing(false);
     }
@@ -230,26 +241,21 @@ export default function BuilderClient() {
       const detailEl = document.getElementById("share-detail-capture");
       const seqEl = document.getElementById("skill-sequence");
       if (!detailEl || !seqEl) return;
-      const [detailUrl, seqUrl] = await Promise.all([
-        toPng(detailEl, opts),
-        toPng(seqEl, opts),
-      ]);
+      const [detailUrl, seqUrl] = await Promise.all([toPng(detailEl, opts), toPng(seqEl, opts)]);
+      const combined = await combinePngs(detailUrl, seqUrl);
 
-      const toFile = (dataUrl: string, name: string) => {
-        const [header, data] = dataUrl.split(",");
-        const mime = header.match(/:(.*?);/)![1];
-        const bytes = atob(data);
-        const u8 = new Uint8Array(bytes.length);
-        for (let i = 0; i < bytes.length; i++) u8[i] = bytes.charCodeAt(i);
-        return new File([u8], name, { type: mime });
-      };
+      const [header, data] = combined.split(",");
+      const mime = header.match(/:(.*?);/)![1];
+      const bytes = atob(data);
+      const u8 = new Uint8Array(bytes.length);
+      for (let i = 0; i < bytes.length; i++) u8[i] = bytes.charCodeAt(i);
+      const file = new File([u8], "7k-team.png", { type: mime });
 
-      const files = [toFile(detailUrl, "formation.png"), toFile(seqUrl, "sequence.png")];
-      if (typeof navigator.canShare === "function" && navigator.canShare({ files })) {
-        await navigator.share({ files, title: "7K Builder Team" });
+      if (typeof navigator.canShare === "function" && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: "7K Builder Team" });
         return;
       }
-      downloadImages(detailUrl, seqUrl);
+      downloadImage(combined);
     } finally {
       setCapturing(false);
     }
@@ -635,30 +641,20 @@ export default function BuilderClient() {
           <div className="bg-white rounded-2xl w-full max-w-3xl flex flex-col shadow-2xl"
             style={{ maxHeight: "90svh" }}
             onClick={(e) => e.stopPropagation()}>
-            {/* Header */}
             <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 shrink-0">
               <h2 className="font-semibold text-gray-800 text-sm">Preview</h2>
               <button onClick={() => setDownloadModal(null)}
                 className="text-gray-400 hover:text-gray-700 text-xl w-7 h-7 flex items-center justify-center">×</button>
             </div>
-            {/* Image previews */}
-            <div className="flex-1 overflow-y-auto p-4 flex flex-col sm:flex-row gap-3 min-h-0">
-              <div className="flex-1 flex flex-col gap-1.5">
-                <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-400">Formation</p>
-                <img src={downloadModal.detail} alt="Formation preview" className="w-full rounded-xl border border-gray-200 object-contain" />
-              </div>
-              <div className="flex-1 flex flex-col gap-1.5">
-                <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-400">Sequence</p>
-                <img src={downloadModal.seq} alt="Sequence preview" className="w-full rounded-xl border border-gray-200 object-contain" />
-              </div>
+            <div className="flex-1 overflow-y-auto p-4 min-h-0">
+              <img src={downloadModal} alt="Team preview" className="w-full rounded-xl border border-gray-200 object-contain" />
             </div>
-            {/* Footer */}
             <div className="flex items-center justify-end gap-2 px-5 py-3 border-t border-gray-100 shrink-0">
               <button onClick={() => setDownloadModal(null)}
                 className="px-4 py-2 text-sm text-gray-500 hover:text-gray-800 rounded-lg hover:bg-gray-100 transition">
                 Cancel
               </button>
-              <button onClick={() => { downloadImages(downloadModal.detail, downloadModal.seq); setDownloadModal(null); }}
+              <button onClick={() => { downloadImage(downloadModal); setDownloadModal(null); }}
                 className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-blue-500 hover:bg-blue-400 rounded-lg transition">
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
